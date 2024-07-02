@@ -1,0 +1,75 @@
+let alert = SecurityAlert
+| extend A_Name = tostring(parse_json(ExtendedProperties).["Analytic Rule Name"])
+| distinct A_Name;
+let day = SecurityIncident
+| where TimeGenerated >= ago(24hr)
+| join kind=inner alert on $left.Title == $right.A_Name
+| extend Day = "Day"
+| distinct Title
+         , Severity
+         , IncidentNumber
+         , Day
+| summarize count(IncidentNumber) by Day;
+let week = SecurityIncident
+| where TimeGenerated >= ago(7d)
+| join kind=inner alert on $left.Title == $right.A_Name
+| extend Day = "Week"
+| distinct Title
+         , Severity
+         , IncidentNumber
+         , Day
+| summarize count(IncidentNumber) by Day;
+let two_weeks = SecurityIncident
+| where TimeGenerated >= ago(14d)
+| join kind=inner alert on $left.Title == $right.A_Name
+| extend Day = "Two Week"
+| distinct Title
+         , Severity
+         , IncidentNumber
+         , Day
+| summarize count(IncidentNumber) by Day;
+let three_week = SecurityIncident
+| where TimeGenerated >= ago(21d)
+| join kind=inner alert on $left.Title == $right.A_Name
+| extend Day = "Three Week"
+| distinct Title
+         , Severity
+         , IncidentNumber
+         , Day
+| summarize count(IncidentNumber) by Day;
+let month = SecurityIncident
+| where TimeGenerated >= ago(30d)
+| join kind=inner alert on $left.Title == $right.A_Name
+| extend Day = "Month"
+| distinct Title
+         , Severity
+         , IncidentNumber
+         , Day
+| summarize count(IncidentNumber) by Day;
+let two_month = SecurityIncident
+| where TimeGenerated >= ago(60d)
+| join kind=inner alert on $left.Title == $right.A_Name
+| extend Day = "Two Month"
+| distinct Title
+         , Severity
+         , IncidentNumber
+         , Day
+| summarize count(IncidentNumber) by Day;
+let three_months = SecurityIncident
+| where TimeGenerated >= ago(90d)
+| join kind=inner alert on $left.Title == $right.A_Name
+| extend Day = "Three Month"
+| distinct Title
+         , Severity
+         , IncidentNumber
+         , Day
+| summarize count(IncidentNumber) by Day;
+union day
+    , week
+    , two_weeks
+    , three_week
+    , month
+    , two_month
+    , three_months
+| sort by count_IncidentNumber asc
+| render columnchart
