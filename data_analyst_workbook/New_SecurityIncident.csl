@@ -1,3 +1,4 @@
+securityincidents
 SecurityIncident 
 | where Status contains "New"
 | summarize count() by Severity
